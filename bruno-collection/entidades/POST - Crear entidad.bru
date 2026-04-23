@@ -1,0 +1,22 @@
+meta {
+  name: Crear entidad
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/entidades
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "nombre": "Clínica Patitas Felices",
+    "tipo": "veterinaria",
+    "ubicacion": "Usaquén",
+    "telefono": "3001234567",
+    "correo": "contacto@patitasfelices.com",
+    "activo": true
+  }
+}

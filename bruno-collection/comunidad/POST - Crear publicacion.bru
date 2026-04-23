@@ -1,0 +1,22 @@
+meta {
+  name: Crear publicacion comunidad
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/comunidad
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "titulo": "Aviso: gato perdido en Chapinero",
+    "contenido": "Se perdió gato naranja con collar azul cerca de la Cll 67",
+    "tipo": "aviso",
+    "id_usuario": "USER_ID",
+    "ubicacion": "Chapinero",
+    "activo": true
+  }
+}

@@ -1,0 +1,22 @@
+meta {
+  name: Actualizar mascota
+  type: http
+  seq: 5
+}
+
+put {
+  url: {{baseUrl}}/mascotas/:id
+  body: json
+  auth: none
+}
+
+params:path {
+  id: 699525b939a98b1d7b566096
+}
+
+body:json {
+  {
+    "estado": "adoptado",
+    "esterilizado": true
+  }
+}

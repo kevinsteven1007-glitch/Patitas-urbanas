@@ -1,0 +1,15 @@
+meta {
+  name: Listar mascotas por ubicacion
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/mascotas?ubicacion=Suba
+  body: none
+  auth: none
+}
+
+query {
+  ubicacion: Suba
+}

@@ -1,0 +1,20 @@
+meta {
+  name: Crear recomendacion
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/solicitud-recomendacion
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "id_entidad": "ENTIDAD_ID",
+    "id_usuario": "USER_ID",
+    "calificacion": 5,
+    "comentario": "Excelente atención y servicio"
+  }
+}

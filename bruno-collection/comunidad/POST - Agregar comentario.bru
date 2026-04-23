@@ -1,0 +1,22 @@
+meta {
+  name: Agregar comentario
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/comunidad/:id/comentarios
+  body: json
+  auth: none
+}
+
+params:path {
+  id: REEMPLAZAR_CON_ID
+}
+
+body:json {
+  {
+    "id_usuario": "USER_ID",
+    "texto": "¡Gracias por el aviso! Lo buscaremos."
+  }
+}

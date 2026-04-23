@@ -1,0 +1,21 @@
+meta {
+  name: Actualizar estado adopcion
+  type: http
+  seq: 3
+}
+
+put {
+  url: {{baseUrl}}/solicitud-adopcion/:id/estado
+  body: json
+  auth: none
+}
+
+params:path {
+  id: REEMPLAZAR_CON_ID
+}
+
+body:json {
+  {
+    "estado": "aprobada"
+  }
+}
