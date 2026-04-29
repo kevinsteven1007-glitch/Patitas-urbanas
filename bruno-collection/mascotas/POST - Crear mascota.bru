@@ -1,0 +1,29 @@
+meta {
+  name: Crear mascota
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{baseUrl}}/mascotas
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "nombre": "Luna",
+    "especie": "perro",
+    "raza": "Labrador",
+    "edad_meses": 12,
+    "ubicacion": "Suba",
+    "estado": "disponible",
+    "esterilizado": true,
+    "vacunas": [],
+    "personalidad": ["tranquilo", "cariñoso"],
+    "salud": {
+      "preexistencias": false,
+      "vacunas_al_dia": true
+    }
+  }
+}

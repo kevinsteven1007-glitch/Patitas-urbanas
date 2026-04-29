@@ -1,0 +1,14 @@
+node_modules
+dist
+.env
+.env.*
+!.env.example
+.git
+.gitignore
+README.md
+error_log.md
+test
+*.spec.ts
+coverage
+.prettierrc
+eslint.config.mjs

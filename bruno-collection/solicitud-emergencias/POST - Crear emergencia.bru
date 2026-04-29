@@ -1,0 +1,21 @@
+meta {
+  name: Crear emergencia
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/solicitud-emergencias
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "id_usuario": "USER_ID",
+    "descripcion": "Perro atropellado en la calle 80 con Av. Boyacá",
+    "ubicacion": "Engativá",
+    "tipo": "animal_herido",
+    "estado": "activa"
+  }
+}

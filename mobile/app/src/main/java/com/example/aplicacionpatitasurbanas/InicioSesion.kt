@@ -1,0 +1,258 @@
+package com.example.aplicacionpatitasurbanas
+
+import android.widget.Toast
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+// ▼▼▼ IMPORTACIONES NUEVAS ▼▼▼
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
+// ▲▲▲ FIN DE IMPORTACIONES NUEVAS ▲▲▲
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
+// ▼▼▼ IMPORTACIONES NUEVAS ▼▼▼
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
+// ▲▲▲ FIN DE IMPORTACIONES NUEVAS ▲▲▲
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.example.aplicacionpatitasurbanas.ui.theme.FondoLilac
+import com.example.aplicacionpatitasurbanas.ui.theme.*
+import com.example.aplicacionpatitasurbanas.ui.theme.RubikPuddles
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
+import androidx.compose.ui.res.stringResource
+import java.net.ConnectException
+import java.net.UnknownHostException
+
+@Composable
+fun InicioSesion(
+    onForgotPasswordClick: () -> Unit,
+    onRegisterClick: () -> Unit,
+    onLoginSuccess: () -> Unit,
+    onError: (Int) -> Unit = {}
+) {
+    var email by remember { mutableStateOf("") }
+    var contrasena by remember { mutableStateOf("") }
+    var errorLogin by remember { mutableStateOf<String?>(null) }
+    var isLoading by remember { mutableStateOf(false) }
+
+    // ▼▼▼ NUEVO ESTADO PARA VISIBILIDAD ▼▼▼
+    var passwordVisible by remember { mutableStateOf(false) }
+
+    val coroutineScope = rememberCoroutineScope()
+    val context = LocalContext.current
+    val auth: FirebaseAuth = Firebase.auth
+
+    val canTry = email.isNotBlank() && contrasena.isNotBlank()
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(FondoLilac)
+            .imePadding()
+            .navigationBarsPadding()
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.ellipse_2),
+            contentDescription = null,
+            modifier = Modifier
+                .align(Alignment.Center)
+                .fillMaxWidth()
+                .graphicsLayer(scaleX = 2.8f, scaleY = 2.8f)
+                .alpha(0.8f),
+            contentScale = ContentScale.Fit
+        )
+
+        Column(
+            modifier = Modifier
+                .align(Alignment.Center)
+                .padding(horizontal = 24.dp)
+                .widthIn(max = 500.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = stringResource(id = R.string.iniciar_sesion),
+                style = TextStyle(fontFamily = RubikPuddles, fontSize = 40.sp),
+                color = TextLight,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Spacer(Modifier.height(24.dp))
+
+            Text(stringResource(id = R.string.email), style = MaterialTheme.typography.bodyLarge, color = TextLight,
+                modifier = Modifier.fillMaxWidth(0.85f))
+            Spacer(Modifier.height(6.dp))
+            TextField(
+                value = email,
+                onValueChange = { email = it; errorLogin = null },
+                singleLine = true,
+                shape = RoundedCornerShape(16.dp),
+                colors = TextFieldDefaults.colors(
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    focusedContainerColor = Color.White,
+                    unfocusedContainerColor = Color.White
+                ),
+                modifier = Modifier
+                    .fillMaxWidth(0.85f)
+                    .height(50.dp)
+            )
+
+            Spacer(Modifier.height(16.dp))
+
+            Text(stringResource(id = R.string.contrasena), style = MaterialTheme.typography.bodyLarge, color = TextLight,
+                modifier = Modifier.fillMaxWidth(0.85f))
+            Spacer(Modifier.height(6.dp))
+
+            // ▼▼▼ CAMBIOS EN EL TEXTFIELD DE CONTRASEÑA ▼▼▼
+            TextField(
+                value = contrasena,
+                onValueChange = { contrasena = it; errorLogin = null },
+                singleLine = true,
+                visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password), // Especifica el tipo de teclado
+                shape = RoundedCornerShape(16.dp),
+                colors = TextFieldDefaults.colors(
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    focusedContainerColor = Color.White,
+                    unfocusedContainerColor = Color.White
+                ),
+                // --- ICONO AÑADIDO A LA IZQUIERDA (leadingIcon) ---
+                leadingIcon = {
+                    val image = if (passwordVisible)
+                        Icons.Filled.Visibility
+                    else
+                        Icons.Filled.VisibilityOff
+
+                    val description = if (passwordVisible) "Ocultar contraseña" else "Mostrar contraseña"
+
+                    IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                        Icon(imageVector = image, description)
+                    }
+                },
+                modifier = Modifier
+                    .fillMaxWidth(0.85f)
+                    .height(50.dp)
+            )
+            // ▲▲▲ FIN DE CAMBIOS ▲▲▲
+
+            Spacer(Modifier.height(8.dp))
+
+            if (errorLogin != null) {
+                Text(
+                    text = errorLogin!!,
+                    color = MaterialTheme.colorScheme.error,
+                    style = MaterialTheme.typography.bodySmall,
+                    modifier = Modifier.fillMaxWidth(0.85f)
+                )
+                Spacer(Modifier.height(8.dp))
+            }
+
+            TextButton(
+                onClick = onForgotPasswordClick,
+                colors = ButtonDefaults.textButtonColors(contentColor = Color(0xFFCCCCCC)),
+                contentPadding = PaddingValues(0.dp),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    stringResource(id = R.string.olvidaste_contrasena),
+                    style = MaterialTheme.typography.bodyLarge,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+
+            Spacer(Modifier.height(18.dp))
+
+            if (isLoading) {
+                CircularProgressIndicator()
+            } else {
+                Button(
+                    onClick = {
+                        isLoading = true
+                        coroutineScope.launch {
+                            try {
+                                auth.signInWithEmailAndPassword(email, contrasena).await()
+                                errorLogin = null
+
+                                // Sincronizar perfil en MongoDB (por si no existe aún)
+                                // Timeout de 5s para no bloquear el login
+                                val user = auth.currentUser
+                                if (user != null) {
+                                    kotlinx.coroutines.withTimeoutOrNull(5000L) {
+                                        try {
+                                            val existing = com.example.aplicacionpatitasurbanas.network.ApiClient.api.obtenerUsuario(user.uid)
+                                            if (!existing.isSuccessful || existing.body() == null) {
+                                                val alias = user.email?.split("@")?.get(0) ?: "usuario"
+                                                com.example.aplicacionpatitasurbanas.network.ApiClient.api.registrarUsuario(mapOf(
+                                                    "uid" to user.uid,
+                                                    "usuario" to alias,
+                                                    "email" to (user.email ?: "")
+                                                ))
+                                            }
+                                        } catch (syncEx: Exception) {
+                                            android.util.Log.w("InicioSesion", "Sync perfil falló: ${syncEx.message}")
+                                        }
+                                    } ?: android.util.Log.w("InicioSesion", "Sync timeout — continuando sin backend")
+                                }
+
+                                isLoading = false
+                                onLoginSuccess()
+                            } catch (e: Exception) {
+                                isLoading = false
+                                errorLogin = context.getString(R.string.error_login)
+                            }
+                        }
+                    },
+                    enabled = canTry,
+                    shape = RoundedCornerShape(24.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFFF0B4BE),
+                        contentColor = Color(0xFF2E2E2E),
+                        disabledContainerColor = Color(0xFFF0B4BE).copy(alpha = 0.5f),
+                        disabledContentColor = Color(0xFF2E2E2E).copy(alpha = 0.6f)
+                    ),
+                    modifier = Modifier
+                        .height(48.dp)
+                        .widthIn(min = 200.dp)
+                ) { Text(stringResource(id = R.string.ingresar), style = TextStyle(fontSize = 18.sp)) }
+            }
+
+
+            Spacer(Modifier.height(14.dp))
+
+            Button(
+                onClick = onRegisterClick,
+                shape = RoundedCornerShape(24.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFFF8B195),
+                    contentColor = Color(0xFF2E2E2E)
+                ),
+                modifier = Modifier
+                    .height(48.dp)
+                    .widthIn(min = 200.dp)
+            ) { Text(stringResource(id = R.string.registrarse), style = TextStyle(fontSize = 18.sp)) }
+        }
+    }
+}

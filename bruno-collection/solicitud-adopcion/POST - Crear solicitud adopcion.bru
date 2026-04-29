@@ -1,0 +1,21 @@
+meta {
+  name: Crear solicitud adopcion
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/solicitud-adopcion
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "id_mascota": "699525b939a98b1d7b566096",
+    "id_solicitante": "USER_ID",
+    "id_dueno": "DUENO_ID",
+    "motivo": "Quiero darle un hogar a esta mascota",
+    "estado": "pendiente"
+  }
+}
